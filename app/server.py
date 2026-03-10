@@ -192,10 +192,11 @@ class AnalysisAPIServer:
         async def analyze_symbol(request: AnalysisRequest):
             """Save analysis results with validation"""
             try:
-                # logger.info(f"sending analysis: {'new'}")
+                logger.info(f"Analysis requested for symbol: {request.symbol}")
                 try:
+                    logger.info(f"Retrieving LLM model for agent: {request.llm_agent_request.agent_name}")
                     llm_client = self.app.state.llm_factory.get_llm_model(
-                        request.llm_agent_request.agent_name
+                        request.llm_agent_request.agent_name,request.llm_agent_request.model
                     )
                 except ImportError as e:
                     raise HTTPException(
