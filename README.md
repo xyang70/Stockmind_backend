@@ -1,4 +1,4 @@
-# LLM Stock Analysis Platform
+# StockMind AI
 
 A **production-grade, enterprise-level stock analysis platform** that leverages large language models (LLMs) combined with real-time financial data and advanced technical indicators to deliver AI-powered trading insights.
 
