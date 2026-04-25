@@ -1,3 +1,4 @@
+import json
 import logging
 from typing import final
 
@@ -17,32 +18,43 @@ logger = logging.getLogger(__name__)
 class AnalysisServiceImpl(AnalysisService):
     def __init__(self, data_processor=None,llm_agent=None,data_provider=None):
         super().__init__()
-        self.data_processor = data_processor or DataProcessingImpl()  # Initialize your data processing implementation
-        self.llm_agent = llm_agent or GeminiAgentCommunication(model_name="gemini-2.5-flash")  # Initialize your Gemini Agent communication implementation
-        self.data_provider = data_provider  or YFinanceDataProvider()# Initialize your data provider implementation
+        self.data_processor = data_processor or DataProcessingImpl()  
+        self.llm_agent = llm_agent or GeminiAgentCommunication(model_name="gemini-2.5-flash")  
+        self.data_provider = data_provider  or YFinanceDataProvider()
         logger.info("AnalysisServiceImpl initialized with data_processor: %s, llm_agent: %s, data_provider: %s",
                     self.data_processor.__class__.__name__,
                     self.llm_agent.__class__.__name__,
                     self.data_provider.__class__.__name__)
+        
     def _retrieve_data(self,symbol,period,interval):
-        # Implement your data retrieval logic here
-        # For example, you can fetch data from an API, a database, or any other source
-        return self.data_provider.get_data(symbol=symbol,period=period,interval=interval)  # Replace with actual data retrieval logic
+      
+        return self.data_provider.get_data(symbol=symbol,period=period,interval=interval) 
 
     def analyze_data(self, symbol):
 
-        _temp_financial_data_model = self.data_provider.get_financial_data(ticker_symbol=symbol)  # Example of using the data provider to get financial data
-        _indicators_payload = self.data_processor.process_data(_temp_financial_data_model.symbol,_temp_financial_data_model.history)  # Process the financial data to extract technical indicators or other insights.
-        # Pass the raw financial model and indicators separately so _send_context_to_agent
-        # can combine them into the final payload. Previously we passed an already
-        # combined dict which caused double-combination and attribute errors.
-        result = self._send_context_to_agent(_temp_financial_data_model, _indicators_payload)  # Send processed data to the Gemini Agent for analysis
-        return result  # Return the result from the LLM agent instead of processed data
+        _temp_financial_data_model = self.data_provider.get_financial_data(ticker_symbol=symbol) 
+        _indicators_payload = self.data_processor.process_data(_temp_financial_data_model.symbol,_temp_financial_data_model.history)  
+        raw_result = self._send_context_to_agent(_temp_financial_data_model, _indicators_payload)  
+        if hasattr(raw_result, "choices"):
+            content = raw_result.choices[0].message.content
+            try:
+                content = json.loads(content)
+            except (TypeError, json.JSONDecodeError):
+                logger.warning("LLM response was not valid JSON; returning raw content.")
+            return {
+            "symbol": symbol,
+            "llm_response": content
+            }
+
+        return {
+            "symbol": symbol,
+            "llm_response": str(raw_result)
+        }
+
     
     def _combine_context(self, financial_data, indicators_payload):
-        # Implement your context combination logic here
-        # For example, you can combine financial data with other information
-        payload = mock_stock_context()  # Replace with actual context retrieval logic
+
+        payload = mock_stock_context()  
         final_payload ={
             "financial_data": FinancialDataJsonConverter.model_to_dict(financial_data),
             "technical_indicators": indicators_payload,
@@ -50,11 +62,10 @@ class AnalysisServiceImpl(AnalysisService):
         return final_payload
     
     def _send_context_to_agent(self, financial_context,indicators_payload=None):
-        context = self._combine_context(financial_context, indicators_payload)  # Combine financial context and indicators into a single context object
-        prompt = build_prompt(context)  # Build a prompt based on the context
-        response = self.llm_agent.send_request(prompt)  # Replace with actual method to send context to the agent
+        context = self._combine_context(financial_context, indicators_payload)  
+        prompt = build_prompt(context)  
+        response = self.llm_agent.send_request(prompt)  
         return response
     def get_results(self, query):
-        # Implement your result retrieval logic here
-        # For example, you can query a database or an in-memory store for results based on the query
-        return {"query": query, "results": "Sample results based on the query"}  # Replace with actual retrieval logic
+
+        return {"query": query, "results": "Sample results based on the query"} 

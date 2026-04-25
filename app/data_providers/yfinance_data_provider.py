@@ -126,36 +126,3 @@ class YFinanceDataProvider(BaseDataProvider):
 
 
 
-# if __name__ == "__main__":
-#     try:
-#         financial = YFinanceDataProvider({
-#             'ticker': 'NVDA',
-#             'start_date': '2020-01-01',
-#             'end_date': date.today().strftime('%Y-%m-%d'),
-#             'period': '1d'
-#         })
-        
-#         financial_news = financial.get_news()
-        
-#         if financial_news:
-#             print(f"\n{'='*80}")
-#             print(f"News Summaries for NVDA")
-#             print(f"{'='*80}\n")
-            
-#             for idx, news_item in enumerate(financial_news, 1):
-#                 print(f"News #{idx}")
-#                 print(f"Title: {news_item.get('title', 'N/A')}")
-#                 print(f"Summary: {news_item.get('summary', 'N/A')}")
-#                 print(f"Source: {news_item.get('source', 'N/A')}")
-#                 print(f"URL: {news_item.get('url', 'N/A')}")
-#                 print(f"-" * 80)
-#         else:
-#             print("No news available")
-    
-#     except ValueError as e:
-#         logger.error(f"Configuration error: {e}")
-#         print(f"Error: {e}")
-#     except Exception as e:
-#         logger.error(f"Unexpected error: {e}")
-#         print(f"Unexpected error: {e}")
-

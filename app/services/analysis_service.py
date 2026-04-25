@@ -11,10 +11,8 @@ class AnalysisService(ABC):
         pass
     # @abstractmethod
     # def save_results(self, results):
-    #     # Implement your result saving logic here
     #     pass
 
     @abstractmethod
     def get_results(self, query):
-        # Implement your result retrieval logic here
         pass

@@ -40,6 +40,33 @@ class MarketAnalyzer:
         df["atr14"] = ta.atr(df["High"], df["Low"], df["Close"], length=14)
         df["chop14"] = ta.chop(df["High"], df["Low"], df["Close"], length=14)
 
+        # Volume-based indicators
+        try:
+            obv = ta.obv(df["Close"], df["Volume"]) if hasattr(ta, 'obv') else None
+        except Exception:
+            obv = None
+        df["obv"] = obv if obv is not None else np.nan
+
+        # VWAP (cumulative typical price * volume / cumulative volume)
+        tp = (df["High"] + df["Low"] + df["Close"]) / 3
+        vol_cum = df["Volume"].cumsum()
+        vol_cum = vol_cum.replace({0: np.nan})
+        df["vwap"] = (tp * df["Volume"]).cumsum() / vol_cum
+
+        # CMF (Chaikin Money Flow) implementation over 20 periods
+        high = df["High"]
+        low = df["Low"]
+        close = df["Close"]
+        vol = df["Volume"]
+        denom = (high - low).replace({0: np.nan})
+        mfm = ((2 * close - high - low) / denom).fillna(0)
+        mfv = mfm * vol
+        df["cmf20"] = mfv.rolling(20).sum() / vol.rolling(20).sum()
+
+        # Volume moving average and percent change
+        df["vol_ma20"] = df["Volume"].rolling(20).mean()
+        df["vol_change_pct"] = df["Volume"].pct_change()
+
         macd = ta.macd(df["Close"], fast=12, slow=26, signal=9)
         if macd is not None and not macd.empty:
             df = df.join(macd)
@@ -368,6 +395,12 @@ class MarketAnalyzer:
                 "bb_middle": self._safe_float(latest.get("bb_middle")),
                 "bb_lower": self._safe_float(latest.get("bb_lower")),
                 "bb_width": self._safe_float(latest.get("bb_width")),
+                # volume indicators
+                "obv": self._safe_float(latest.get("obv")),
+                "vwap": self._safe_float(latest.get("vwap")),
+                "cmf20": self._safe_float(latest.get("cmf20")),
+                "vol_ma20": self._safe_float(latest.get("vol_ma20")),
+                "vol_change_pct": self._safe_float(latest.get("vol_change_pct")),
             },
             "level_summary": {
                 "nearest_support": nearest_support,

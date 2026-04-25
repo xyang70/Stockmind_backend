@@ -9,6 +9,4 @@ class LLMCommunications(ABC):
     def send_request(self, prompt):
         pass
 
-    # @abstractmethod
-    # def receive_response(self):
-    #     pass
+ 
