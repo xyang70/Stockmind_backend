@@ -2,6 +2,80 @@
 
 A **production-grade, enterprise-level stock analysis platform** that leverages large language models (LLMs) combined with real-time financial data and advanced technical indicators to deliver AI-powered trading insights.
 
+---
+
+## 🔧 Getting Started
+
+### **Prerequisites**
+- Python 3.9+
+- Redis server (for job queue)
+- API Keys: Google Gemini, OpenRouter (optional)
+
+### **Installation**
+```bash
+# Clone repository
+git clone <repo_url>
+cd llm_stock_analysis
+
+# Create virtual environment
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Configure environment
+cp .env.example .env
+# Edit .env with your API keys and configuration
+```
+
+### **Running the Application**
+
+**Start API Server:**
+```bash
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+**Start Background Worker:**
+```bash
+arq app.worker.WorkerSettings     
+```
+
+**API Documentation:**
+- Swagger UI: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
+
+### **Example Usage**
+```bash
+# Submit analysis job
+POST http://localhost:8000/us/stocks/analysis
+Body
+{
+    "symbol": "rklb",
+    "llm_agent_request": {
+        "agent_name": "open_router",
+        "model": "openrouter/elephant-alpha"
+    }
+}
+
+# Response:
+{
+    "success": true,
+    "message": "Analysis job queued successfully",
+    "data": {
+        "job_id": {{job_id}},
+        "status": "queued"
+    },
+    "error": null,
+    "timestamp": "timestamp"
+}
+
+## To get/poll result, retreive job_id from above:
+  GET localhost:8000/us/stocks/analysis/{{job_id}}
+
+```
+
+---
 ## Project Overview
 
 This project demonstrates **full-stack software engineering** with emphasis on:
@@ -259,63 +333,7 @@ app/
     └── mock_llm_context.py      # Testing utilities
 ```
 
----
 
-## 🔧 Getting Started
-
-### **Prerequisites**
-- Python 3.9+
-- Redis server (for job queue)
-- API Keys: Google Gemini, OpenRouter (optional)
-
-### **Installation**
-```bash
-# Clone repository
-git clone <repo_url>
-cd llm_stock_analysis
-
-# Create virtual environment
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Configure environment
-cp .env.example .env
-# Edit .env with your API keys and configuration
-```
-
-### **Running the Application**
-
-**Start API Server:**
-```bash
-python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
-```
-
-**Start Background Worker:**
-```bash
-arq app.worker.WorkerSettings     
-```
-
-**API Documentation:**
-- Swagger UI: http://localhost:8000/docs
-- ReDoc: http://localhost:8000/redoc
-
-### **Example Usage**
-```bash
-# Submit analysis job
-curl -X POST http://localhost:8000/us/stocks/analysis \
-  -H "Content-Type: application/json" \
-  -d '{"ticker": "AAPL", "timeframe": "1d"}'
-
-# Response: {"job_id": "abc123"}
-
-# Poll results
-curl http://localhost:8000/us/stocks/analysis/abc123
-```
-
----
 
 ## 📈 Why This Project Stands Out
 
