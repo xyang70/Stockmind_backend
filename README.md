@@ -74,6 +74,8 @@ Body
   GET localhost:8000/us/stocks/analysis/{{job_id}}
 
 ```
+*Project uses OpenRouter api for quick LLMs swapping, please update/refer to list of supported LLMs in app/config/open_router.yml*
+
 
 ---
 ## Project Overview

@@ -7,12 +7,15 @@ agents:
     Nous:
       hermes-3:
         model-name: nousresearch/hermes-3-llama-3.1-405b:free
-    openRouterElephant:
-      elephant:
-        model-name: openrouter/elephant-alpha
-    qwen:
-      qwen3-Next-80B:
-        model-name: qwen/qwen3-next-80b-a3b-instruct:free
+    inclusionAI:
+      Ling-2.6-1T:
+        model-name: inclusionai/ling-2.6-1t:free
+    tencent:
+      hy3-preview:
+        model-name: tencent/hy3-preview:free
+    MiniMax:
+      MiniMax-M2.5:
+        model-name: minimax/minimax-m2.5:free
     stepfun:
       step-3.5-flash-free:
         model-name: stepfun/step-3.5-flash:free
