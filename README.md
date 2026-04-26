@@ -15,7 +15,7 @@ A **production-grade, enterprise-level stock analysis platform** that leverages 
 ```bash
 # Clone repository
 git clone <repo_url>
-cd llm_stock_analysis
+cd Stockmind_backend
 
 # Create virtual environment
 python -m venv .venv
