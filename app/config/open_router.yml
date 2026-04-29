@@ -19,6 +19,9 @@ agents:
     stepfun:
       step-3.5-flash-free:
         model-name: stepfun/step-3.5-flash:free
+    Poolside:
+      poolside-laguna-xs.2:
+        model-name: poolside/laguna-xs.2:free
 
   
   

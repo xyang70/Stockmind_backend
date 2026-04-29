@@ -1,5 +1,5 @@
 from app.llm_models.LLM_communications import LLMCommunications
-from typing import Dict
+from typing import Dict, List
 from app.llm_models.gemini_agent_comm import GeminiAgentCommunication
 
 class LLMModelFactory:
@@ -97,3 +97,27 @@ class LLMModelFactory:
             self._models[normalized_agent] = self._build_model(agent=agent,model_name=model_name)
         
         return self._models[normalized_agent]
+
+    def get_available_models(self) -> List[str]:
+        """Return all configured model names across supported agents."""
+        available: List[str] = []
+
+        gemini_cfg = self.config.get("gemini", {})
+        gemini_model = gemini_cfg.get("model_name")
+        if gemini_model:
+            available.append(str(gemini_model))
+
+        open_router_list = self.config.get("open_router", [])
+        for entry in open_router_list:
+            if not isinstance(entry, dict):
+                continue
+            model_name = (
+                entry.get("model_alias")
+                or entry.get("model-name")
+                or entry.get("model_name")
+            )
+            if model_name:
+                available.append(str(model_name))
+
+        # Stable order, unique values
+        return sorted(set(available))

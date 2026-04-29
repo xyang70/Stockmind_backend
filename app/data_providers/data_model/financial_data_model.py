@@ -24,7 +24,7 @@ from pydantic import BaseModel, ConfigDict
 
 
 class FinancialNewsItem(BaseModel):
-    summary: str
+    summary: str | None = None
     title: str
     source: str
     canonicalUrl: str

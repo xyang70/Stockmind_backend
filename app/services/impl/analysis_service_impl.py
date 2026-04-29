@@ -38,6 +38,7 @@ class AnalysisServiceImpl(AnalysisService):
         if hasattr(raw_result, "choices"):
             content = raw_result.choices[0].message.content
             try:
+                print(content)
                 content = json.loads(content)
             except (TypeError, json.JSONDecodeError):
                 logger.warning("LLM response was not valid JSON; returning raw content.")

@@ -25,7 +25,7 @@ class YFinanceDataProvider(BaseDataProvider):
     
     def get_financial_data(self,ticker_symbol) -> FinancialDataModel:
         history = self._get_data(ticker_symbol=ticker_symbol)
-        news = self._get_news(ticker_symbol=ticker_symbol)
+        news = self.get_news(ticker_symbol=ticker_symbol)
         return FinancialDataModel(
             symbol=ticker_symbol,
             history=history,
@@ -58,7 +58,7 @@ class YFinanceDataProvider(BaseDataProvider):
                     except Exception:
                         history = None
 
-            news = self._get_news(ticker_symbol=t)
+            news = self.get_news(ticker_symbol=t)
             try:
                 model = FinancialDataModel(symbol=t, history=history, news=news)
                 results.append(model)
@@ -85,7 +85,7 @@ class YFinanceDataProvider(BaseDataProvider):
             logger.error(f"Error fetching data for {ticker_symbol}: {e}")
             return None
     
-    def _get_news(self,ticker_symbol):
+    def get_news(self,ticker_symbol,enable_summary=True) -> list[FinancialNewsItem]:
         try:
             logger.info(f"Fetching news for {ticker_symbol}")
             news_summary = []
@@ -106,7 +106,7 @@ class YFinanceDataProvider(BaseDataProvider):
                     print(source)
                     news_summary.append(
                         FinancialNewsItem(
-                            summary=summary,
+                            summary=enable_summary and summary or None,
                             title=title,
                             source=source,
                             canonicalUrl=canonicalUrl
