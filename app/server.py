@@ -10,6 +10,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes.analysis import router as analysis_router
+from app.api.routes.chat import router as chat_router
 from app.api.routes.health import router as health_router
 from app.api.routes.info import router as info_router
 from app.api.routes.status import router as status_router
@@ -96,6 +97,7 @@ class AnalysisAPIServer:
         self.app.include_router(health_router)
         self.app.include_router(status_router)
         self.app.include_router(analysis_router)
+        self.app.include_router(chat_router)
 
     def run(self, host: Optional[str] = None, port: Optional[int] = None) -> None:
         host = host or self.config.host
